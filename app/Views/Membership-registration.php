@@ -48,7 +48,7 @@ $this->start('mainContent');
                                 <div class="col-4 col-md-3 d-flex justify-content-center align-items-center" id="sendCodeSection">
                                     <button class="btn btn-sm btn-outline-success" type="button" id="sendCodeBtn">Send Code</button>
                                 </div>
-                                <div id="codeSection" class="text-center">
+                                <div id="codeSection" class="text-center d-none">
                                     <label class="fw-bold mb-2">Enter 6-Digit Code</label>
                                     <div class="d-flex justify-content-center gap-2 mb-3 px-2 px-md-5">
                                         <input type="password" maxlength="1" class="form-control pin-input text-center pin-code ms-md-5" required>

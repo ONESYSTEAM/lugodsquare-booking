@@ -10,7 +10,7 @@ $this->start('mainContent');
         <div class="container d-flex justify-content-center align-items-center flex-column">
             <div class="row justify-content-center p-3">
                 <div class="col-md-9 p-4 shadow-sm text-center search-form ">
-                    <h1 class="fw-bold">Welcome!</h1    >
+                    <h1 class="fw-bold">Welcome!</h1>
                     <p>Your Membership ID:</p>
                     <h4 class="fw-bold"><?= htmlspecialchars($_SESSION['membership_id']); ?></h4>
                     <hr>
@@ -19,21 +19,26 @@ $this->start('mainContent');
                     <form method="POST" id="pinForm" action="/member">
                         <!-- PIN -->
                         <label class="fw-bold mb-2">Enter PIN</label>
-                        <div class="d-flex justify-content-center gap-2 mb-3 px-5 mx-md-5">
-                            <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-main ms-md-5" required>
-                            <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-main" required>
-                            <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-main" required>
-                            <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-main me-md-5" required>
+                        <div class="row justify-content-center">
+                            <div class="col-md-6 d-flex justify-content-center gap-2 mb-3 px-5 mx-md-5">
+                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-main ms-md-5" required>
+                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-main" required>
+                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-main" required>
+                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-main me-md-5" required>
+                            </div>
                         </div>
+
 
                         <!-- Confirm PIN -->
                         <div id="confirmPinSection">
                             <label class="fw-bold mb-2">Confirm PIN</label>
-                            <div class="d-flex justify-content-center gap-2 mb-3 px-5 mx-md-5">
-                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-confirm ms-md-5" required>
-                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-confirm" required>
-                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-confirm" required>
-                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-confirm me-md-5" required>
+                            <div class="row justify-content-center">
+                                <div class="col-md-6 d-flex justify-content-center gap-2 mb-3 px-5 mx-md-5">
+                                    <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-confirm ms-md-5" required>
+                                    <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-confirm" required>
+                                    <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-confirm" required>
+                                    <input type="password" maxlength="1" class="form-control pin-input text-center pin-input-confirm me-md-5" required>
+                                </div>
                             </div>
                             <div id="ConfirmpinStatus" class="mb-2 text-center small"></div>
                         </div>
