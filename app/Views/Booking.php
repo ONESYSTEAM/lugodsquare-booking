@@ -178,7 +178,7 @@
                                                         <select class="form-select" id="court" name="courtType" required="">
                                                             <option value="" hidden></option>
                                                             <?php foreach ($courts as $court): ?>
-                                                                <option value="<?= $court['id'] ?>"><?= $court['court_type'] ?> Court</option>
+                                                                <option value="<?= $court['id'] ?>"><?= $court['court_type'] ?></option>
                                                             <?php endforeach; ?>
                                                         </select>
                                                         <label for="court">Court</label>

@@ -22,12 +22,14 @@ class MembershipModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function addMembership($firstName, $lastName, $contactNum, $email, $membershipId)
+    public function addMembership($firstName, $lastName, $birthDate, $address, $contactNum, $email, $membershipId)
     {
-        $stmt = $this->db->prepare("INSERT INTO members (first_name, last_name, contact_number, email, membership_id, joined_at ) 
-        VALUES (:first_name, :last_name, :contact_number, :email,:membership_id, NOW())");
+        $stmt = $this->db->prepare("INSERT INTO members (first_name, last_name, address, birth_date, contact_number, email, membership_id, joined_at ) 
+        VALUES (:first_name, :last_name, :address, :birth_date, :contact_number, :email,:membership_id, NOW())");
         $stmt->bindParam(':first_name', $firstName, PDO::PARAM_STR);
         $stmt->bindParam(':last_name', $lastName, PDO::PARAM_STR);
+        $stmt->bindParam(':address', $address, PDO::PARAM_STR);
+        $stmt->bindParam(':birth_date', $birthDate, PDO::PARAM_STR);
         $stmt->bindParam(':contact_number', $contactNum, PDO::PARAM_STR);
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->bindParam(':membership_id', $membershipId, PDO::PARAM_STR);

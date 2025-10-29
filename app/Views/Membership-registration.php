@@ -33,6 +33,18 @@ $this->start('mainContent');
                                 </div>
                                 <div class="col-12">
                                     <div class="form-floating">
+                                        <input type="date" class="form-control" id="birthDate" name="birthDate" required="">
+                                        <label for="birthDate">Birth Date</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="address" name="address" required="">
+                                        <label for="address">Address</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
                                         <input type="text" class="form-control" id="contactNum" name="contactNum" required="">
                                         <label for="contactNum">Contact Number</label>
                                         <div id="feedback" class="text-danger"></div>

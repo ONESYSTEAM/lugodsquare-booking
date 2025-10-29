@@ -23,6 +23,8 @@ class MembershipController
             $lastName = $_POST['lastName'];
             $contactNum = $_POST['contactNum'];
             $email = $_POST['email'];
+            $birthDate = $_POST['birthDate'];
+            $address = $_POST['address'];
 
             $MembershipId = $this->MembershipModel->getMemberId();
             if ($MembershipId && isset($MembershipId['membership_id'])) {
@@ -36,7 +38,7 @@ class MembershipController
                 $generatedId = "CBMS-$year-0001";
             }
 
-            $addMember = $this->MembershipModel->addMembership($firstName, $lastName, $contactNum, $email, $generatedId);
+            $addMember = $this->MembershipModel->addMembership($firstName, $lastName, $birthDate, $address, $contactNum, $email, $generatedId);
 
             if ($addMember) {
                 $member = $this->MembershipModel->getMemberById($generatedId);

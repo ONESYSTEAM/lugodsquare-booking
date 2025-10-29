@@ -18,14 +18,14 @@ class BookingModel
 
     public function getCourts()
     {
-        $stmt = $this->db->prepare("SELECT * FROM court");
+        $stmt = $this->db->prepare("SELECT * FROM courts_tbl");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getCourtByType($courtType)
     {
-        $stmt = $this->db->prepare("SELECT * FROM court WHERE id = :court");
+        $stmt = $this->db->prepare("SELECT * FROM courts_tbl WHERE id = :court");
         $stmt->bindParam(':court', $courtType, PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
