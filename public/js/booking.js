@@ -354,7 +354,10 @@ $(document).ready(function () {
             '#firstName',
             '#lastName',
             '#contactNum',
-            '#email'
+            '#email',
+            '#court',
+            '#capacity',
+            '#amount'
         ];
 
         let allFilled = true;
@@ -365,7 +368,7 @@ $(document).ready(function () {
         });
 
         // Enable or disable booking schedule fields
-        $('#date, #startTime, #endTime, #total,#court, #capacity, #amount').prop('disabled', !allFilled);
+        $('#date, #startTime, #endTime, #total').prop('disabled', !allFilled);
     }
 
     // Check fields on page load
