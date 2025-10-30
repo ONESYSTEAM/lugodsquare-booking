@@ -98,16 +98,21 @@ $(document).ready(function () {
                     $('#memberStatus').text('Membership ID Verified. Enjoy your 10% Discount!')
                         .removeClass('text-danger text-muted')
                         .addClass('text-success');
-
+                    // Show Wallet Check button
+                    $('#checkWallet').removeClass('d-none');
                     // Auto-fill fields
                     $('#firstName').val(response.firstName);
                     $('#lastName').val(response.lastName);
                     $('#email').val(response.email);
                     $('#contactNum').val(response.contactNum);
-                    $('#sendCodeBtn').text('Verified').removeClass('btn-outline-success').addClass('btn-success').prop('disabled', true);
+                    $('#walletText').val(parseFloat(response.wallet).toFixed(2)).attr('readonly', true);
+                    $('#walletBalance').val(response.wallet);
+                    $('#walletMemberName').text(response.firstName + ' ' + response.lastName);
+                    $('#walletBalanceAmount').text(parseFloat(response.wallet).toFixed(2));
+                    $('#sendCodeBtn').text('Verified').removeClass('btn-outline-danger').addClass('btn-danger').prop('disabled', true);
 
                     // Disable editing (lock fields)
-                    $('#firstName, #lastName, #email, #contactNum')
+                    $('#firstName, #lastName, #email, #contactNum, #membershipId')
                         .attr('readonly', true);
 
                     // 🌟 Hide the discount banner when membership is verified
@@ -168,7 +173,7 @@ $(document).ready(function () {
                 },
                 success: function (response) {
                     if (response.status === 'success') {
-                        $('#total').val(response.total).attr('readonly', true);
+                        $('#total').val(parseFloat(response.total).toFixed(2)).attr('readonly', true);
 
                         let loadingMsg = isMember ? "Applying membership discount..." : "Calculating total...";
                         Swal.fire({
@@ -183,7 +188,7 @@ $(document).ready(function () {
                                     $('#subtotalSection').removeClass('d-none');
                                     $('#subtotalText').text(`₱${response.subtotal}`);
                                     $('#discountText').text(`-₱${response.discount}`);
-
+                                    $('#subTotal').val(response.total);
                                     Swal.fire({
                                         icon: "success",
                                         title: "Discount Applied!",
@@ -280,29 +285,53 @@ $(document).ready(function () {
             success: function (response) {
                 // Re-enable all options first
                 $('#startTime option, #endTime option').prop('disabled', false).removeClass('text-danger');
+                // --- FULLY BOOKED DETECTION ---
+                const allDayStart = '07:00:00';
+                const allDayEnd = '17:00:00';
 
-                if (response.bookedSlots && response.bookedSlots.length > 0) {
-                    response.bookedSlots.forEach(slot => {
-                        const start = slot.start_time;
-                        const end = slot.end_time;
+                // Check if all booked slots cover the full 7 AM – 5 PM range
+                const isFullyBooked = response.bookedSlots.some(slot =>
+                    slot.start_time >= allDayStart && slot.end_time <= allDayEnd
+                );
 
-                        // Disable start times that fall within booked ranges
-                        $('#startTime option, #endTime option').each(function () {
-                            const val = $(this).val();
-                            if (val >= start && val < end) {
-                                $(this).prop('disabled', true).addClass('text-danger');
-                            }
-                        });
-                    });
-
+                if (isFullyBooked) {
                     Swal.fire({
-                        icon: 'info',
-                        title: 'Some time slots are unavailable',
-                        text: 'Unavailable times are shown in red and cannot be selected.',
-                        timer: 5000,
-                        showConfirmButton: false
+                        icon: 'warning',
+                        title: 'Date Fully Booked',
+                        text: 'All time slots for this date are fully booked. Please select another date.',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Clear and reset date input
+                        $('#date').val('');
+                        // Also clear times just in case
+                        $('#startTime').val('');
+                        $('#endTime').val('');
                     });
+                } else {
+                    if (response.bookedSlots && response.bookedSlots.length > 0) {
+                        response.bookedSlots.forEach(slot => {
+                            const start = slot.start_time;
+                            const end = slot.end_time;
+
+                            // Disable start times that fall within booked ranges
+                            $('#startTime option, #endTime option').each(function () {
+                                const val = $(this).val();
+                                if (val >= start && val < end) {
+                                    $(this).prop('disabled', true).addClass('text-danger');
+                                }
+                            });
+                        });
+
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Some time slots are unavailable',
+                            text: 'Unavailable times are shown in red and cannot be selected.',
+                            timer: 5000,
+                            showConfirmButton: false
+                        });
+                    }
                 }
+
             },
             error: function () {
                 Swal.fire({
@@ -325,10 +354,7 @@ $(document).ready(function () {
             '#firstName',
             '#lastName',
             '#contactNum',
-            '#email',
-            '#court',
-            '#capacity',
-            '#amount'
+            '#email'
         ];
 
         let allFilled = true;
@@ -339,7 +365,7 @@ $(document).ready(function () {
         });
 
         // Enable or disable booking schedule fields
-        $('#date, #startTime, #endTime, #total').prop('disabled', !allFilled);
+        $('#date, #startTime, #endTime, #total,#court, #capacity, #amount').prop('disabled', !allFilled);
     }
 
     // Check fields on page load
@@ -367,7 +393,7 @@ $(document).ready(function () {
             });
             return; // stop submission
         }
-        
+
         const formData = $(this).serialize();
 
         Swal.fire({
@@ -411,6 +437,67 @@ $(document).ready(function () {
                     text: 'Something went wrong while processing your booking.'
                 });
                 console.error(xhr.responseText);
+            }
+        });
+    });
+
+    // Format number to ₱x,xxx.xx
+    function formatCurrency(n) {
+        return '₱' + Number(n).toLocaleString('en-PH', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    // Parse text (e.g. "₱3,000.00") to number
+    function parseCurrency(text) {
+        if (text === undefined || text === null) return 0;
+        const cleaned = String(text).replace(/[^0-9.-]+/g, '');
+        const n = parseFloat(cleaned);
+        return isNaN(n) ? 0 : n;
+    }
+
+
+    $('#useWallet').on('change', function () {
+        const isChecked = $(this).is(':checked');
+
+        $.ajax({
+            url: '/calculateDeduction',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                wallet: $('#walletBalance').val(),
+                total: $('#subTotal').val()
+            },
+            success: function (response) {
+                if (response.status === 'success') {
+                    if (isChecked) {
+                        Swal.fire({
+                            icon: response.icon,
+                            title: response.title,
+                            text: response.noBalanceMessage ? response.noBalanceMessage : 'Your wallet balance has been applied to the total amount.',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        if (response.zero_balance) {
+                            $('#useWallet').prop('checked', false);
+                            return;
+                        }
+                        $('#total').val(response.deducted_amount);
+                        $('#walletText').val(parseFloat(response.new_wallet_balance).toFixed(2));
+                    } else if (!isChecked) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Wallet Deduction Removed',
+                            text: 'Your wallet balance deduction has been removed.',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        // Unchecked → revert to original values
+                        $('#total').val(response.subtotal);
+                        $('#walletText').val(response.wallet_balance);
+                    }
+                }
             }
         });
     });

@@ -15,7 +15,7 @@ $this->insert('Errors/Toasts');
                 <div class="col-lg-6 mb-5">
                     <hr class="d-block d-lg-none mx-2 mb-5">
                     <h2 class="text-center mb-5 fw-bold text-light">Registration Form</h2>
-                    <form action="/membership-pin" method="POST">
+                    <form action="/membership-registration/add" method="POST">
                         <div class="row g-3 mx-2 mb-2">
                             <div class="col-6">
                                 <div class="form-floating">
@@ -71,7 +71,7 @@ $this->insert('Errors/Toasts');
                                 <input type="hidden" id="code" placeholder="Enter verification code">
                             </div>
                             <div class="col-12">
-                                <button type="submit" class="btn btn-danger w-100">Register Account</button>
+                                <button type="submit" class="btn btn-danger w-100" name="sumbitRegistration">Register Account</button>
                             </div>
                         </div>
                     </form>

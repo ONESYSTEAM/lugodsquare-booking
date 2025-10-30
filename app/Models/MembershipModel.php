@@ -24,8 +24,8 @@ class MembershipModel
 
     public function addMembership($firstName, $lastName, $birthDate, $address, $contactNum, $email, $membershipId)
     {
-        $stmt = $this->db->prepare("INSERT INTO members (first_name, last_name, address, birth_date, contact_number, email, membership_id, joined_at ) 
-        VALUES (:first_name, :last_name, :address, :birth_date, :contact_number, :email,:membership_id, NOW())");
+        $stmt = $this->db->prepare("INSERT INTO members (first_name, last_name, address, birth_date, contact_number, email, membership_id, wallet, joined_at ) 
+        VALUES (:first_name, :last_name, :address, :birth_date, :contact_number, :email,:membership_id, '0.00', NOW())");
         $stmt->bindParam(':first_name', $firstName, PDO::PARAM_STR);
         $stmt->bindParam(':last_name', $lastName, PDO::PARAM_STR);
         $stmt->bindParam(':address', $address, PDO::PARAM_STR);

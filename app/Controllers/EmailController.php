@@ -27,6 +27,13 @@ class EmailController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = trim($_POST['email']);
 
+            $checkEmailExists = $this->EmailModel->checkEmailExists($email);
+            
+            if ($checkEmailExists) {
+                echo json_encode(['success' => false, 'message' => 'Email is already registered.']);
+                return;
+            }
+
             // Validate email format
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 echo json_encode(['valid' => false, 'message' => 'Invalid email format.']);
@@ -67,7 +74,6 @@ class EmailController
                 echo json_encode(['success' => false, 'message' => 'No verification record found.']);
                 return;
             }
-
             // Expired (older than 10 minutes)
             $createdAt = strtotime($verification['created_at']);
             if (time() - $createdAt > 600) {

@@ -56,4 +56,12 @@ class BookingModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function updateWalletBalance($membershipId, $newBalance)
+    {
+        $stmt = $this->db->prepare("UPDATE members SET wallet = :balance WHERE membership_id = :id");
+        $stmt->bindParam(':balance', $newBalance, PDO::PARAM_STR);
+        $stmt->bindParam(':id', $membershipId, PDO::PARAM_STR);
+        return $stmt->execute();
+    }
 }

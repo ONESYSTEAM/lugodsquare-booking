@@ -18,10 +18,11 @@ class Router
         Router::add('/', fn() => (new BookingController())->index());
 
         Router::add('/membership-registration', fn() => Router::render('Membership-registration'));
-        Router::add('/membership-pin', fn() => (new MembershipController())->add(), 'POST');
-        Router::add('/member', fn() => (new MembershipController())->setPin(), 'POST');
-        Router::add('/confirmation', fn() => Router::render('Confirmation-page'));
-        Router::add('/remove-session', fn() => (new MembershipController())->logout());
+        Router::add('/membership-registration/add', fn() => (new MembershipController())->add(), 'POST');
+        Router::add('/membership-pin', fn() => Router::render('Membership-pin'));
+        Router::add('/membership-pin/set', fn() => (new MembershipController())->setPin(), 'POST');
+        Router::add('/confirmation', fn() => Router::render('Membership-confirmation'));
+        Router::add('/end-session', fn() => (new MembershipController())->logout());
 
 
         Router::add('/check-membership', fn() => (new MembershipController())->checkMembership(), 'POST');
@@ -33,6 +34,8 @@ class Router
         Router::add('/get-booked-slots', fn() => (new BookingController())->getBookedSlots(), 'POST');
 
         Router::add('/booking', fn() => (new BookingController())->booking(), 'POST');
+
+        Router::add('/calculateDeduction', fn() => (new BookingController())->calculateDeduction(), 'POST');
 
         // Run the router
         Router::run();

@@ -18,7 +18,7 @@ class EmailModel
      public function save($email, $code)
     {
         $stmt = $this->db->prepare("INSERT INTO email_verifications (email, code, created_at) VALUES (:email,:code , NOW()) 
-                              ON DUPLICATE KEY UPDATE code = VALUES(code), created_at = NOW()");
+        ON DUPLICATE KEY UPDATE code = VALUES(code), created_at = NOW()");
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->bindParam(':code', $code, PDO::PARAM_STR);
         $stmt->execute();
@@ -30,6 +30,15 @@ class EmailModel
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function checkEmailExists($email)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM members WHERE email = :email");
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['count'] > 0;
     }
 
     public function delete($email)

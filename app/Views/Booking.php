@@ -100,7 +100,10 @@ $this->insert('Errors/Toasts');
                                         <div class="form-floating">
                                             <input type="text" class="form-control" id="membershipId" name="membershipId">
                                             <label for="membershipId">Membership ID (Optional)</label>
-                                            <div id="memberStatus" class="form-text text-muted mt-1"></div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div id="memberStatus" class="form-text text-muted mt-1"></div>
+                                                <a class="btn btn-sm btn-link text-warning mt-1 d-none" id="checkWallet" data-bs-toggle="modal" data-bs-target="#exampleModal">Check Wallet</a>
+                                            </div>
                                         </div>
                                     </div>
                                     <div id="pinSection" class="mt-3 text-center d-none">
@@ -232,10 +235,25 @@ $this->insert('Errors/Toasts');
                                             <label for="endTime">End Time</label>
                                         </div>
                                     </div>
-                                    <div id="subtotalSection" class="d-none mt-2 text-muted">
+                                    <div id="subtotalSection" class="d-none mt-2 text-light">
                                         <div>Subtotal: <span id="subtotalText">₱0.00</span></div>
                                         <div>Membership Discount: <span id="discountText">₱0.00</span></div>
+                                        <hr>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="useWallet">
+                                            <label class="form-check-label" for="useWallet">
+                                                Use Wallet Balance
+                                            </label>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-floating">
+                                                <input type="text" class="form-control" id="walletText" name="walletBalance">
+                                                <label for="total">Wallet Balance</label>
+                                            </div>
+                                        </div>
                                     </div>
+                                    <input type="hidden" id="walletBalance">
+                                    <input type="hidden" name="subTotal" id="subTotal">
                                     <div class="col-12">
                                         <div class="form-floating">
                                             <input type="text" class="form-control" id="total" name="total" required="">
@@ -275,6 +293,32 @@ $this->insert('Errors/Toasts');
         </div>
     </div>
 </footer>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Wallet Balance</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="p-3 bg-light rounded">
+                    <h5 class="mb-3">Hello, <span id="walletMemberName"></span>!</h5>
+                    <p>Your current wallet balance is:</p>
+                    <h3 class="text-success">₱<span id="walletBalanceAmount">0.00</span></h3>
+                    <hr>
+                    <p>You can use your wallet balance to pay for your bookings and enjoy exclusive discounts as a valued member.</p>
+                    <div class="alert alert-info" role="alert">
+                        Note: If your wallet balance covers the total booking amount, no additional payment will be required.
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Scroll Top -->
 <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center bg-dark"><i class="bi bi-arrow-up-short"></i></a>

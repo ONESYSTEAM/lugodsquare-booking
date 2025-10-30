@@ -2,6 +2,11 @@
 $this->layout('Layout', ['mainContent' => $this->fetch('Layout')]);
 $this->start('mainContent');
 $this->insert('Errors/Toasts');
+
+if(!isset($_SESSION['membership_id'])) {
+    header("Location:/membership-registration");
+    exit;
+}
 ?>
 
 <section class="hero bg-dark" style="padding: 0 !important;">
@@ -20,7 +25,7 @@ $this->insert('Errors/Toasts');
 						<p class="text-secondary mb-4">Keep this ID for future court bookings to avail exclusive discounts! To get your physical ID, drop by our office and bring a small fee for processing.</p>
 
 						<div class="d-flex gap-2">
-							<a href="/remove-session " class="btn btn-confirm flex-fill">Go to Homepage</a>
+							<a href="/end-session " class="btn btn-confirm flex-fill">Go to Homepage</a>
 						</div>
 					</div>
 				</div>

@@ -18,7 +18,7 @@ class MembershipController
     // Add your custom controllers below to handle business logic.
     public function add()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['sumbitRegistration']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $firstName = $_POST['firstName'];
             $lastName = $_POST['lastName'];
             $contactNum = $_POST['contactNum'];
@@ -46,7 +46,7 @@ class MembershipController
                 $_SESSION['last_name'] = $member['last_name'];
                 $_SESSION['membership_id'] = $member['membership_id'];
 
-                echo $GLOBALS['templates']->render('Membership-pin');
+                header("Location:/membership-pin");
                 exit;
             }
         }
@@ -54,14 +54,12 @@ class MembershipController
 
     public function setPin()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['submitPinBtn'])) {
             $pin = $_POST['pin'];
             $hashedPin = password_hash($pin, PASSWORD_DEFAULT);
 
             $set_pin = $this->MembershipModel->setPin($hashedPin, $_SESSION['membership_id']);
-            if ($set_pin) {
-                echo $GLOBALS['templates']->render('Membership-confirmation');
-            }
+            header("Location:/confirmation");
         }
     }
 
@@ -96,7 +94,8 @@ class MembershipController
                     'firstName' => $member['first_name'],
                     'lastName' => $member['last_name'],
                     'email' => $member['email'],
-                    'contactNum' => $member['contact_number']
+                    'contactNum' => $member['contact_number'],
+                    'wallet' => $member['wallet']
                 ]);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Incorrect Pin']);

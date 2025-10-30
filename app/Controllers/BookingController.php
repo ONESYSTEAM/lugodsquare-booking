@@ -67,7 +67,7 @@ class BookingController
                 return;
             }
 
-            $durationHours = ($endTime - $startTime) / 3600; 
+            $durationHours = ($endTime - $startTime) / 3600;
             $subtotal = round($durationHours * $rate, 2);
             $discount = 0;
 
@@ -81,7 +81,7 @@ class BookingController
                 'status' => 'success',
                 'subtotal' => number_format($subtotal, 2),
                 'discount' => number_format($discount, 2),
-                'total' => number_format($total, 2)
+                'total' => $total
             ]);
         }
     }
@@ -99,6 +99,7 @@ class BookingController
             $startTime = $_POST['startTime'];
             $endTime = $_POST['endTime'];
             $totalAmount = $_POST['total'];
+            $walletBalance = $_POST['walletBalance'];
 
             $result = $this->BookingModel->insertBooking(
                 $membershipId,
@@ -112,6 +113,8 @@ class BookingController
                 $endTime,
                 $totalAmount
             );
+
+            $this->BookingModel->updateWalletBalance($membershipId, $walletBalance);
 
             header('Content-Type: application/json');
             $court = $this->BookingModel->getCourtByType($courtType);
@@ -162,7 +165,7 @@ class BookingController
 
     private function sendBookingConfirmationEmail($email, $name, $courtType, $date, $startTime, $endTime, $totalAmount)
     {
-        $subject = "Court Booking Confirmation - ".$courtType." Court";
+        $subject = "Court Booking Confirmation - " . $courtType . " Court";
 
         $formattedDate = date('F j, Y', strtotime($date));
         $formattedStart = date('g:i A', strtotime($startTime));
@@ -220,5 +223,51 @@ class BookingController
             error_log("Email error: " . $mail->ErrorInfo);
             return false;
         }
+    }
+
+    public function calculateDeduction()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return [
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ];
+        }
+
+        $totalAmount = floatval($_POST['total'] ?? 0);
+        $walletBalance = floatval($_POST['wallet'] ?? 0);
+
+        if ($walletBalance >= $totalAmount) {
+            $newWalletBalance = $walletBalance - $totalAmount;
+            $deductedAmount = 0;
+            $icon = 'success';
+            $title = 'Wallet Fully Applied';
+        } else if($walletBalance == 0) {
+            $icon = 'warning';
+            $title = 'No Wallet Balance';
+            $noBalanceMessage = 'You have no wallet balance to apply.';
+            $deductedAmount = $totalAmount;
+            $newWalletBalance = $walletBalance;
+            $zerobalance = true;
+        }else {
+            $deductedAmount = $walletBalance;
+            $newWalletBalance = 0;
+            $totalAmount -= $walletBalance;
+            $icon = 'info';
+            $title = 'Partial Wallet Applied';
+        }
+
+        echo json_encode([
+            'status' => 'success',
+            'icon'=> $icon ,
+            'title'=> $title,
+            'noBalanceMessage' => $noBalanceMessage,
+            'subtotal' => number_format($totalAmount, 2),
+            'wallet_balance' => number_format($walletBalance, 2),
+            'deducted_amount' => number_format($deductedAmount, 2),
+            'new_wallet_balance' =>  $newWalletBalance,
+            'zero_balance' => $zerobalance ?? false
+            
+        ]);
     }
 }
