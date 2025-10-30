@@ -171,26 +171,27 @@ class BookingController
         $formattedStart = date('g:i A', strtotime($startTime));
         $formattedEnd = date('g:i A', strtotime($endTime));
         $formattedAmount = $totalAmount;
+        $appName = $_ENV['APP_NAME'] ?? '';
 
         $body = "
         <div style='font-family: Arial, sans-serif; background-color: #f6f8fa; padding: 20px;'>
             <div style='max-width:600px;margin:auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
-                <div style='background-color:#2c7a7b;color:white;text-align:center;padding:20px;'>
+                <div style='background-color: #dc3545;color:white;text-align:center;padding:20px;'>
                     <h2 style='margin:0;'>Court Booking Confirmation</h2>
                 </div>
                 <div style='padding:25px;'>
                     <p>Hi <strong>$name</strong>,</p>
-                    <p>We’re happy to inform you that your court booking has been successfully confirmed.</p>
+                    <p>We're happy to inform you that your court booking has been successfully confirmed.</p>
 
                     <div style='background-color:#f9fafc;padding:15px;border-radius:6px;margin:15px 0;'>
-                        <p><strong>Court Type:</strong> $courtType</p>
-                        <p><strong>Date:</strong> $formattedDate</p>
+                        <p><strong>Court Type:</strong> $courtType </p>
+                        <p><strong>Date:</strong> $formattedDate </p> 
                         <p><strong>Time:</strong> $formattedStart - $formattedEnd</p>
                         <p><strong>Total Amount:</strong> ₱$formattedAmount</p>
                     </div>
 
                     <p>Please arrive at least <strong>10 minutes before</strong> your scheduled time.</p>
-                    <p>Thank you for choosing <strong>Lugod Square</strong> — we look forward to seeing you!</p>
+                    <p>Thank you for choosing <strong>$appName</strong> — we look forward to seeing you!</p>
 
                     <hr style='border:none;border-top:1px solid #ddd;margin:20px 0;'>
 
@@ -199,7 +200,7 @@ class BookingController
                 </div>
             </div>
         </div>
-    ";
+        ";
 
         try {
             $mail = new PHPMailer(true);
@@ -242,14 +243,14 @@ class BookingController
             $deductedAmount = 0;
             $icon = 'success';
             $title = 'Wallet Fully Applied';
-        } else if($walletBalance == 0) {
+        } else if ($walletBalance == 0) {
             $icon = 'warning';
             $title = 'No Wallet Balance';
             $noBalanceMessage = 'You have no wallet balance to apply.';
             $deductedAmount = $totalAmount;
             $newWalletBalance = $walletBalance;
             $zerobalance = true;
-        }else {
+        } else {
             $deductedAmount = $walletBalance;
             $newWalletBalance = 0;
             $totalAmount -= $walletBalance;
@@ -259,15 +260,15 @@ class BookingController
 
         echo json_encode([
             'status' => 'success',
-            'icon'=> $icon ,
-            'title'=> $title,
+            'icon' => $icon,
+            'title' => $title,
             'noBalanceMessage' => $noBalanceMessage,
             'subtotal' => number_format($totalAmount, 2),
             'wallet_balance' => number_format($walletBalance, 2),
             'deducted_amount' => number_format($deductedAmount, 2),
             'new_wallet_balance' =>  $newWalletBalance,
             'zero_balance' => $zerobalance ?? false
-            
+
         ]);
     }
 }

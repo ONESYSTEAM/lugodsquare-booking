@@ -4,6 +4,8 @@ namespace app\Controllers;
 
 use config\DBConnection;
 use app\Models\MembershipModel;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class MembershipController
 {
@@ -57,9 +59,62 @@ class MembershipController
         if (isset($_POST['submitPinBtn'])) {
             $pin = $_POST['pin'];
             $hashedPin = password_hash($pin, PASSWORD_DEFAULT);
+            $membershipId = $_POST['membershipId'];
 
-            $set_pin = $this->MembershipModel->setPin($hashedPin, $_SESSION['membership_id']);
-            header("Location:/confirmation");
+            $subject = "Membership Confirmation";
+            $appName = $_ENV['APP_NAME'] ?? '';
+
+            $body = "
+            <div style='font-family: Arial, sans-serif; background-color: #f6f8fa; padding: 20px;'>
+                <div style='max-width:600px;margin:auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+                    <div style='background-color: #dc3545;color:white;text-align:center;padding:20px;'>
+                        <h2 style='margin:0;'>Court Booking Confirmation</h2>
+                    </div>
+                    <div style='padding:25px;'>
+                        <p>We're happy to inform you that your membership has been successfully confirmed.</p>
+
+                        <div style='background-color:#f9fafc;padding:15px;border-radius:6px;margin:15px 0;'>
+                            <p><strong>Membership ID:</strong> $membershipId </p>
+                        </div>
+
+                        <p>To get your physical ID, drop by our office and bring a small fee for processing.</p>
+                        <p>Thank you for choosing <strong>$appName</strong> — we look forward to seeing you!</p>
+
+                        <hr style='border:none;border-top:1px solid #ddd;margin:20px 0;'>
+
+                        <p style='font-size:13px;color:#777;text-align:center;'>This is an automated message, please do not reply.<br>
+                        &copy; " . date('Y') . " Lugod Square. All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+            ";
+
+            $this->MembershipModel->setPin($hashedPin, $_SESSION['membership_id']);
+
+            $member = $this->MembershipModel->getMemberByPin($membershipId, $hashedPin);
+            $email = $member['email'];
+
+            try {
+                $mail = new PHPMailer(true);
+                $mail->isSMTP();
+                $mail->Host = $_ENV['MAIL_HOST'];
+                $mail->Port = $_ENV['MAIL_PORT'];
+                $mail->SMTPAuth = true;
+                $mail->Username = $_ENV['MAIL_USERNAME'];
+                $mail->Password = $_ENV['MAIL_PASSWORD'];
+                $mail->SMTPSecure = 'tls';
+
+                $mail->setFrom($_ENV['MAIL_FROM'], $_ENV['MAIL_FROM_NAME']);
+                $mail->addAddress($email);
+                $mail->isHTML(true);
+                $mail->Subject = $subject;
+                $mail->Body = $body;
+
+                $mail->send();
+                header("Location:/confirmation");
+            } catch (Exception $e) {
+                error_log("Email error: " . $mail->ErrorInfo);
+            }
         }
     }
 

@@ -50,6 +50,7 @@ class MembershipModel
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    
     public function getMemberByPin($membershipId, $pin)
     {
         $stmt = $this->db->prepare("SELECT * FROM members WHERE membership_id = :membership_id AND pin = :pin");

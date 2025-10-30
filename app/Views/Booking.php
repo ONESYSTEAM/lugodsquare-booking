@@ -31,6 +31,7 @@ $this->insert('Errors/Toasts');
                 <ul>
                     <li><a href="#">Home</a></li>
                     <li><a href="#">About</a></li>
+                    <li><a href="#">Merchandise</a></li>
                     <li><a href="#">Contact</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
@@ -57,7 +58,7 @@ $this->insert('Errors/Toasts');
                         <div class="main-image">
                             <img src="<?= assets('img/assets/pickleball.webp') ?>" alt="Luxury Property" class="img-fluid">
                             <div class="property-tag">
-                                <span class="price">$850,000</span>
+                                <span class="price">Pickleball Court</span>
                                 <span class="type">Featured</span>
                             </div>
                         </div>
@@ -66,7 +67,7 @@ $this->insert('Errors/Toasts');
                                 <img src="img/real-estate/agent-4.webp" alt="Agent" class="agent-avatar">
                                 <div class="agent-details">
                                     <h5>Lugod Square</h5>
-                                    <p>Barangay 16, GC</p>
+                                    <p>Barangay 16, Gingoog City</p>
                                     <div class="rating">
                                         <a href="https://maps.app.goo.gl/PVKim6ow4Lt7Emp79" class="text-danger" target="_blank"> <i class="bi bi-geo-alt text-danger"></i> Visit Us</a>
                                     </div>
@@ -84,7 +85,7 @@ $this->insert('Errors/Toasts');
     <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="row align-items-center">
             <h2 class="text-center m-3 fw-bold text-light" id="booking-form">Booking Details</h2>
-            <div class="col-lg-12 hero-text" data-aos="fade-right" data-aos-delay="200">
+            <div class="col-lg-12 hero-text" data-aos="fade-up" data-aos-delay="200">
                 <div class="search-form mt-2" data-aos="fade-up" data-aos-delay="300">
                     <div id="memberBanner" class="alert alert-info alert-dismissible fade show py-2 px-3 mb-3" role="alert">
                         🎉 <strong>Become a member</strong> today and enjoy <strong>10% off</strong> all court bookings!
@@ -107,13 +108,13 @@ $this->insert('Errors/Toasts');
                                         </div>
                                     </div>
                                     <div id="pinSection" class="mt-3 text-center d-none">
-                                        <label class="form-label fw-bold mb-2">Enter 4-Digit PIN</label>
+                                        <label class="form-label fw-bold mb-2 text-light">Enter 4-Digit PIN</label>
                                         <div class="row justify-content-center">
                                             <div class="col-9 col-md-4 d-flex justify-content-center gap-2 px-4 px-md-0">
-                                                <input type="password" maxlength="1" class="pin-input form-control text-center" id="pin1">
-                                                <input type="password" maxlength="1" class="pin-input form-control text-center" id="pin2">
-                                                <input type="password" maxlength="1" class="pin-input form-control text-center" id="pin3">
-                                                <input type="password" maxlength="1" class="pin-input form-control text-center" id="pin4">
+                                                <input type="text" maxlength="1" class="pin-input form-control text-center" id="pin1">
+                                                <input type="text" maxlength="1" class="pin-input form-control text-center" id="pin2">
+                                                <input type="text" maxlength="1" class="pin-input form-control text-center" id="pin3">
+                                                <input type="text" maxlength="1" class="pin-input form-control text-center" id="pin4">
                                             </div>
                                         </div>
                                         <div id="pinStatus" class="mt-2 text-center small text-muted"></div>
@@ -281,7 +282,7 @@ $this->insert('Errors/Toasts');
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <div class="copyright">
-                        <p>&copy; <span>Copyright</span> <strong>Lugod Square</strong>. <span>All Rights Reserved.</span></p>
+                        <p>&copy; <?= date("Y") ?> <strong>Lugod Square</strong>. <span>All rights reserved.</span></p>
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -306,21 +307,21 @@ $this->insert('Errors/Toasts');
                 <div class="p-3 bg-light rounded">
                     <h5 class="mb-3">Hello, <span id="walletMemberName"></span>!</h5>
                     <p>Your current wallet balance is:</p>
-                    <h3 class="text-success">₱<span id="walletBalanceAmount">0.00</span></h3>
+                    <h3 class="text-danger">₱<span id="walletBalanceAmount">0.00</span></h3>
                     <hr>
                     <p>You can use your wallet balance to pay for your bookings and enjoy exclusive discounts as a valued member.</p>
                     <div class="alert alert-info" role="alert">
                         Note: If your wallet balance covers the total booking amount, no additional payment will be required.
                     </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Scroll Top -->
-<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center bg-dark"><i class="bi bi-arrow-up-short"></i></a>
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center bg-dark"><i class="bi bi-arrow-up-short"></i></a>
 
-<?php $this->stop() ?>
+    <?php $this->stop() ?>
