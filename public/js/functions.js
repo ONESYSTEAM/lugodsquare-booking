@@ -160,6 +160,7 @@ $(document).ready(function () {
                         $('form').attr('data-email-verified', 'true');
                         $('#email, #code').prop('readonly', true);
                         $('#sendCodeBtn').prop('disabled', true).text('Verified');
+                        $('#sendCodeBtn').addClass('btn btn-sm btn-outline-danger');
                         $('#codeSection').addClass('d-none');
                         $('#email-status').text('✅ Email verified successfully!')
                             .removeClass('text-danger')

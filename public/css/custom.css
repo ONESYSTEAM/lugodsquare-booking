@@ -1,0 +1,32 @@
+@font-face {
+    font-family: 'WarbandStencilTextured';
+    src: url('../fonts/WarbandStencilTextured.otf') format('opentype');
+}
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.textured-bg {
+    background-image: url('../img/assets/textured-background.webp');
+    background-size: cover;
+}
+
+/* .hero {
+    display: block;
+} */
+
+.warband-stencil-textured {
+    font-family: 'WarbandStencilTextured';
+}
+
+.footer {
+    padding: 0;
+    border-top: none;
+}
+
+.footer .footer-bottom {
+    margin-top: 0;
+}
