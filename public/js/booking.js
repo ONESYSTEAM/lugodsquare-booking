@@ -105,7 +105,7 @@ $(document).ready(function () {
                     $('#lastName').val(response.lastName);
                     $('#email').val(response.email);
                     $('#contactNum').val(response.contactNum);
-                    $('#walletText').val(parseFloat(response.wallet).toFixed(2)).attr('readonly', true);
+                    $('#walletText').val(response.wallet).attr('readonly', true);
                     $('#walletBalance').val(response.wallet);
                     $('#walletMemberName').text(response.firstName + ' ' + response.lastName);
                     $('#walletBalanceAmount').text(parseFloat(response.wallet).toFixed(2));
@@ -132,6 +132,8 @@ $(document).ready(function () {
                         timer: 5000,
                         showConfirmButton: false
                     });
+
+                    $('#firstName, #lastName, #email, #contactNum').trigger('input');
 
                 } else {
                     $('#pinStatus').text('Incorrect PIN ❌')
@@ -253,7 +255,7 @@ $(document).ready(function () {
 
                         // Disable editing (lock fields)
                         $('#capacity, #amount')
-                            .attr('readonly', true);
+                            .attr('readonly', true).trigger('input');
                     } else {
                         // Handle not found
                         $('#capacity, #amount').val('');
@@ -271,9 +273,11 @@ $(document).ready(function () {
         }
     });
 
-    function checkAvailability() {
+    // Trigger check when court or date is changed
+    $('#court, #date').on('change', function () {
         const court = $('#court').val();
         const date = $('#date').val();
+
 
         if (!court || !date) return;
 
@@ -285,16 +289,40 @@ $(document).ready(function () {
             success: function (response) {
                 // Re-enable all options first
                 $('#startTime option, #endTime option').prop('disabled', false).removeClass('text-danger');
+                console.log(response.bookedSlots);
+
                 // --- FULLY BOOKED DETECTION ---
-                const allDayStart = '07:00:00';
-                const allDayEnd = '17:00:00';
+                const allDayStart = "07:00";
+                const allDayEnd = "17:00";
 
-                // Check if all booked slots cover the full 7 AM – 5 PM range
-                const isFullyBooked = response.bookedSlots.some(slot =>
-                    slot.start_time >= allDayStart && slot.end_time <= allDayEnd
-                );
+                // Convert to numbers -> "07:00" → 700, "17:00" → 1700 for easy compare
+                function timeNum(t) {
+                    return parseInt(t.replace(":", ""), 10);
+                }
 
-                if (isFullyBooked) {
+                // Sort slots by start time
+                const slots = (response.bookedSlots ?? []).map(s => ({
+                    start: timeNum(s.start_time),
+                    end: timeNum(s.end_time)
+                })).sort((a, b) => a.start - b.start);
+
+                let currentStart = timeNum(allDayStart);
+                let fullyBooked = false;
+
+                for (let i = 0; i < slots.length; i++) {
+                    if (slots[i].start > currentStart) {
+                        fullyBooked = false; // gap found
+                        break;
+                    }
+                    if (slots[i].end > currentStart) {
+                        currentStart = slots[i].end; // extend covered time
+                    }
+                    if (currentStart >= timeNum(allDayEnd)) {
+                        fullyBooked = true; // reached 5pm
+                        break;
+                    }
+                }
+                if (fullyBooked) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Date Fully Booked',
@@ -341,12 +369,14 @@ $(document).ready(function () {
                     timer: 1500,
                     showConfirmButton: false
                 });
+
+                // Disable start times that fall within booked ranges
+                $('#startTime option, #endTime option').each(function () {
+                    $(this).prop('disabled', false).removeClass('text-danger');
+                });
             }
         });
-    }
-
-    // Trigger check when court or date is changed
-    $('#court, #date').on('change', checkAvailability);
+    });
 
     // Function to check if all required fields in Customer + Court sections are filled
     function checkRequiredFields() {
@@ -444,64 +474,56 @@ $(document).ready(function () {
         });
     });
 
-    // Format number to ₱x,xxx.xx
-    function formatCurrency(n) {
-        return '₱' + Number(n).toLocaleString('en-PH', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    }
+     $('#useWallet').on('change', function() {
+            const isChecked = $(this).is(':checked');
 
-    // Parse text (e.g. "₱3,000.00") to number
-    function parseCurrency(text) {
-        if (text === undefined || text === null) return 0;
-        const cleaned = String(text).replace(/[^0-9.-]+/g, '');
-        const n = parseFloat(cleaned);
-        return isNaN(n) ? 0 : n;
-    }
-
-
-    $('#useWallet').on('change', function () {
-        const isChecked = $(this).is(':checked');
-
-        $.ajax({
-            url: '/calculateDeduction',
-            method: 'POST',
-            dataType: 'json',
-            data: {
-                wallet: $('#walletBalance').val(),
-                total: $('#subTotal').val()
-            },
-            success: function (response) {
-                if (response.status === 'success') {
-                    if (isChecked) {
-                        Swal.fire({
-                            icon: response.icon,
-                            title: response.title,
-                            text: response.noBalanceMessage ? response.noBalanceMessage : 'Your wallet balance has been applied to the total amount.',
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                        if (response.zero_balance) {
-                            $('#useWallet').prop('checked', false);
-                            return;
+            $.ajax({
+                url: '/calculateDeduction',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    wallet: $('#walletBalance').val(),
+                    total: $('#subTotal').val()
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        if (isChecked) {
+                            Swal.fire({
+                                icon: response.icon,
+                                title: response.title,
+                                text: response.noBalanceMessage ? response.noBalanceMessage : 'Your wallet balance has been applied to the total amount.',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            if (response.zero_balance) {
+                                $('#useWallet').prop('checked', false);
+                                return;
+                            }
+                            $('#total').val(response.deducted_amount);
+                            $('#walletText').val(parseFloat(response.new_wallet_balance).toFixed(2));
+                        } else if (!isChecked) {
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Wallet Deduction Removed',
+                                text: 'Your wallet balance deduction has been removed.',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            // Unchecked → revert to original values
+                            $('#total').val(response.subtotal);
+                            $('#walletText').val(response.wallet_balance);
                         }
-                        $('#total').val(response.deducted_amount);
-                        $('#walletText').val(parseFloat(response.new_wallet_balance).toFixed(2));
-                    } else if (!isChecked) {
-                        Swal.fire({
-                            icon: 'info',
-                            title: 'Wallet Deduction Removed',
-                            text: 'Your wallet balance deduction has been removed.',
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                        // Unchecked → revert to original values
-                        $('#total').val(response.subtotal);
-                        $('#walletText').val(response.wallet_balance);
                     }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while calculating the deduction. Please try again.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
                 }
-            }
+            });
         });
-    });
 });

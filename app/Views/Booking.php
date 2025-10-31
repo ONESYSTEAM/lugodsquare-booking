@@ -320,8 +320,10 @@ $this->insert('Errors/Toasts');
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Scroll Top -->
-    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center bg-dark"><i class="bi bi-arrow-up-short"></i></a>
 
-    <?php $this->stop() ?>
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center bg-dark"><i class="bi bi-arrow-up-short"></i></a>
+
+<?php $this->stop() ?>

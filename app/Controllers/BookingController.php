@@ -170,7 +170,7 @@ class BookingController
         $formattedDate = date('F j, Y', strtotime($date));
         $formattedStart = date('g:i A', strtotime($startTime));
         $formattedEnd = date('g:i A', strtotime($endTime));
-        $formattedAmount = $totalAmount;
+        $formattedAmount = ($totalAmount == 0.00) ? 'Paid' : '₱'.number_format($totalAmount, 2);
         $appName = $_ENV['APP_NAME'] ?? '';
 
         $body = "
@@ -187,7 +187,7 @@ class BookingController
                         <p><strong>Court Type:</strong> $courtType </p>
                         <p><strong>Date:</strong> $formattedDate </p> 
                         <p><strong>Time:</strong> $formattedStart - $formattedEnd</p>
-                        <p><strong>Total Amount:</strong> ₱$formattedAmount</p>
+                        <p><strong>Total Amount:</strong> $formattedAmount</p>
                     </div>
 
                     <p>Please arrive at least <strong>10 minutes before</strong> your scheduled time.</p>
@@ -235,8 +235,11 @@ class BookingController
             ];
         }
 
-        $totalAmount = floatval($_POST['total'] ?? 0);
-        $walletBalance = floatval($_POST['wallet'] ?? 0);
+        $totalAmount = floatval(str_replace(',', '', $_POST['total'] ?? 0));
+        $walletBalance = floatval(str_replace(',', '', $_POST['wallet'] ?? 0));
+
+        $noBalanceMessage = '';
+        $zerobalance = false;
 
         if ($walletBalance >= $totalAmount) {
             $newWalletBalance = $walletBalance - $totalAmount;
@@ -251,11 +254,10 @@ class BookingController
             $newWalletBalance = $walletBalance;
             $zerobalance = true;
         } else {
-            $deductedAmount = $walletBalance;
+            $deductedAmount = $totalAmount - $walletBalance;
             $newWalletBalance = 0;
-            $totalAmount -= $walletBalance;
             $icon = 'info';
-            $title = 'Partial Wallet Applied';
+            $title = 'Partial Wallet Payment Applied';
         }
 
         echo json_encode([
@@ -267,7 +269,7 @@ class BookingController
             'wallet_balance' => number_format($walletBalance, 2),
             'deducted_amount' => number_format($deductedAmount, 2),
             'new_wallet_balance' =>  $newWalletBalance,
-            'zero_balance' => $zerobalance ?? false
+            'zero_balance' => $zerobalance
 
         ]);
     }
