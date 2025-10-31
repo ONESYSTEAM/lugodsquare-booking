@@ -17,7 +17,6 @@ class MembershipController
         $this->MembershipModel = new MembershipModel($db);
     }
 
-    // Add your custom controllers below to handle business logic.
     public function add()
     {
         if (isset($_POST['sumbitRegistration']) && $_SERVER['REQUEST_METHOD'] === 'POST') {

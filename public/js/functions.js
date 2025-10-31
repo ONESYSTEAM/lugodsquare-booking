@@ -1,5 +1,3 @@
-
-//Set pin page
 function combinePIN(className, hiddenInputId) {
     let pin = '';
     $(className).each(function () {
@@ -15,14 +13,12 @@ $('.pin-input-main').on('input', function () {
 
     combinePIN('.pin-input-main', '#pinValue');
 
-    // Show confirm PIN section when 4 digits entered
     if ($('#pinValue').val().length === 4) {
         $('#confirmPinSection').fadeIn();
         $('.pin-input-confirm').first().focus();
     }
 });
 
-// Handle backspace navigation between boxes
 $('.pin-input-main').on('keydown', function (e) {
     if (e.key === 'Backspace' && $(this).val() === '') {
         $(this).prev('.pin-input-main').focus();
@@ -36,14 +32,12 @@ $('.pin-input-confirm').on('input', function () {
     combinePIN('.pin-input-confirm', '#confirmSetPinValue');
 });
 
-// Handle backspace navigation between boxes
 $('.pin-input-confirm').on('keydown', function (e) {
     if (e.key === 'Backspace' && $(this).val() === '') {
         $(this).prev('.pin-input-confirm').focus();
     }
 });
 
-// Form validation
 $('#pinForm').on('submit', function (e) {
     const pin = $('#pinValue').val();
     const confirmPin = $('#confirmSetPinValue').val();
@@ -115,13 +109,11 @@ $(document).ready(function () {
             $(this).next('.pin-code').focus();
         }
 
-        // Combine all digits into hidden input
         combinePIN('.pin-code', '#code');
 
         const email = $('#email').val().trim();
         const code = $('#code').val().trim();
 
-        // If all 6 digits are filled, auto-submit
         if (code.length === 6) {
             if (!email || !code) {
                 Swal.fire({
@@ -186,7 +178,6 @@ $(document).ready(function () {
         }
     });
 
-    // Handle backspace navigation between boxes
     $('.pin-code').on('keydown', function (e) {
         if (e.key === 'Backspace' && $(this).val() === '') {
             $(this).prev('.pin-code').focus();
@@ -208,21 +199,19 @@ $(document).ready(function () {
         let mobile = $(this).val().trim();
         let feedback = $('#feedback');
 
-        // Regex for Philippine numbers: 09XXXXXXXXX or +639XXXXXXXXX
         let phPattern = /^(09\d{9}|\+639\d{9})$/;
 
-        // Check first 2-3 digits
         if (mobile.length >= 2 && mobile.length < 4) {
             if (mobile.startsWith("09") || mobile.startsWith("+63")) {
                 feedback.addClass('d-none').removeClass('d-block');
             } else {
                 feedback.text("Invalid number.").addClass('d-block').removeClass('d-none');
             }
-            return; // exit early until more digits are typed
+            return;
         }
 
         if (mobile.length < 11) {
-            feedback.text(""); // don't show error while typing
+            feedback.text("");
             return;
         }
 
@@ -234,23 +223,20 @@ $(document).ready(function () {
     });
 
     $('form[action="/membership-pin"]').on('submit', function (e) {
-        e.preventDefault(); // always prevent default submit
+        e.preventDefault();
 
         let contactNum = $('#contactNum').val().trim();
-
-
-        // Validate contact number
         let phPattern = /^(09\d{9}|\+639\d{9})$/;
+
         if (!phPattern.test(contactNum)) {
             Swal.fire({
                 icon: 'error',
                 title: 'Invalid Number',
                 text: 'Contact number must start with 09 or +63 and be 11 digits.'
             });
-            return; // stop submission
+            return;
         }
 
-        // All validations passed – submit the form safely
         this.submit();
     });
 });

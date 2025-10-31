@@ -14,7 +14,6 @@ class MembershipModel
         $this->db = $db->getConnection();
     }
 
-    // Add your custom methods below to interact with the database.
     public function getMemberId()
     {
         $stmt = $this->db->prepare("SELECT membership_id FROM members ORDER BY id DESC LIMIT 1");
@@ -50,7 +49,7 @@ class MembershipModel
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    
+
     public function getMemberByPin($membershipId, $pin)
     {
         $stmt = $this->db->prepare("SELECT * FROM members WHERE membership_id = :membership_id AND pin = :pin");

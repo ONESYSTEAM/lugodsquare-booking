@@ -3,7 +3,7 @@ $this->layout('Layout', ['mainContent' => $this->fetch('Layout')]);
 $this->start('mainContent');
 $this->insert('Errors/Toasts');
 
-if(!isset($_SESSION['membership_id'])) {
+if (!isset($_SESSION['membership_id'])) {
     header("Location:/membership-registration");
     exit;
 }

@@ -23,7 +23,6 @@ $this->insert('Errors/Toasts');
         <div
             class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
             <a href="/" class="logo d-flex align-items-center me-auto me-xl-0">
-                <!-- Uncomment the line below if you also wish to use an image logo -->
                 <!-- <img src="img/logo.webp" alt=""> -->
                 <h1 class="sitename"><?= $_ENV['APP_NAME'] ?? '' ?></h1>
             </a>
@@ -295,7 +294,6 @@ $this->insert('Errors/Toasts');
     </div>
 </footer>
 
-<!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -322,8 +320,6 @@ $this->insert('Errors/Toasts');
     </div>
 </div>
 
-
-<!-- Scroll Top -->
 <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center bg-dark"><i class="bi bi-arrow-up-short"></i></a>
 
 <?php $this->stop() ?>

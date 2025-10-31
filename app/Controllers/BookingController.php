@@ -17,8 +17,6 @@ class BookingController
         $this->BookingModel = new BookingModel($db);
     }
 
-    // Add your custom controllers below to handle business logic.
-
     public function index()
     {
         $courts = $this->BookingModel->getCourts();
@@ -170,7 +168,7 @@ class BookingController
         $formattedDate = date('F j, Y', strtotime($date));
         $formattedStart = date('g:i A', strtotime($startTime));
         $formattedEnd = date('g:i A', strtotime($endTime));
-        $formattedAmount = ($totalAmount == 0.00) ? 'Paid' : '₱'.number_format($totalAmount, 2);
+        $formattedAmount = ($totalAmount == 0.00) ? 'Paid' : '₱' . number_format($totalAmount, 2);
         $appName = $_ENV['APP_NAME'] ?? '';
 
         $body = "

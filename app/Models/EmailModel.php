@@ -13,9 +13,8 @@ class EmailModel
     {
         $this->db = $db->getConnection();
     }
-    
-    // Add your custom methods below to interact with the database.
-     public function save($email, $code)
+
+    public function save($email, $code)
     {
         $stmt = $this->db->prepare("INSERT INTO email_verifications (email, code, created_at) VALUES (:email,:code , NOW()) 
         ON DUPLICATE KEY UPDATE code = VALUES(code), created_at = NOW()");

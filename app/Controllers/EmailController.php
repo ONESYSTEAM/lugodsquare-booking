@@ -17,9 +17,7 @@ class EmailController
         $db = new DBConnection();
         $this->EmailModel = new EmailModel($db);
     }
-
-    // Add your custom controllers below to handle business logic.
-
+    
     public function verifyEmail()
     {
         header('Content-Type: application/json');
@@ -28,7 +26,7 @@ class EmailController
             $email = trim($_POST['email']);
 
             $checkEmailExists = $this->EmailModel->checkEmailExists($email);
-            
+
             if ($checkEmailExists) {
                 echo json_encode(['success' => false, 'message' => 'Email is already registered.']);
                 return;

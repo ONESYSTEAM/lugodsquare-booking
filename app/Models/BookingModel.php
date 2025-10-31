@@ -14,18 +14,16 @@ class BookingModel
         $this->db = $db->getConnection();
     }
 
-    // Add your custom methods below to interact with the database.
-
     public function getCourts()
     {
-        $stmt = $this->db->prepare("SELECT * FROM courts_tbl");
+        $stmt = $this->db->prepare("SELECT * FROM courts");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getCourtByType($courtType)
     {
-        $stmt = $this->db->prepare("SELECT * FROM courts_tbl WHERE id = :court");
+        $stmt = $this->db->prepare("SELECT * FROM courts WHERE id = :court");
         $stmt->bindParam(':court', $courtType, PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -41,7 +39,7 @@ class BookingModel
         $stmt->bindParam(':num', $contactNum, PDO::PARAM_STR);
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->bindParam(':court', $courtType, PDO::PARAM_STR);
-        $stmt->bindParam(':date', $date , PDO::PARAM_STR);
+        $stmt->bindParam(':date', $date, PDO::PARAM_STR);
         $stmt->bindParam(':stime', $startTime, PDO::PARAM_STR);
         $stmt->bindParam(':etime', $endTime, PDO::PARAM_STR);
         $stmt->bindParam(':total', $totalAmount, PDO::PARAM_STR);

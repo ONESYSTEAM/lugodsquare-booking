@@ -2,7 +2,7 @@ $(document).ready(function () {
 
     let isMember = false;
     const discountRate = 0.10;
-    // When membership ID is complete (14 digits)
+
     $('#membershipId').on('input', function () {
         const idValue = $(this).val().trim();
 
@@ -46,17 +46,14 @@ $(document).ready(function () {
         }
     });
 
-    // Handle PIN input movement
     $('.pin-input').on('input', function () {
         let $this = $(this);
         let value = $this.val();
 
-        // Move to next box if one digit is entered
         if (value.length === 1) {
             $this.next('.pin-input').focus();
         }
 
-        // When all boxes are filled, verify automatically
         let pin = '';
         $('.pin-input').each(function () {
             pin += $(this).val();
@@ -67,14 +64,12 @@ $(document).ready(function () {
         }
     });
 
-    // Handle backspace navigation between boxes
     $('.pin-input').on('keydown', function (e) {
         if (e.key === 'Backspace' && $(this).val() === '') {
             $(this).prev('.pin-input').focus();
         }
     });
 
-    // Function: verify PIN via AJAX
     function verifyPin(pin) {
         $.ajax({
             url: '/verify-pin',
@@ -91,16 +86,11 @@ $(document).ready(function () {
                     $('#pinStatus').text('PIN verified ✅')
                         .removeClass('text-danger')
                         .addClass('text-success');
-
-                    // Hide PIN section
                     $('#pinSection').addClass('d-none');
-                    // Update member status
                     $('#memberStatus').text('Membership ID Verified. Enjoy your 10% Discount!')
                         .removeClass('text-danger text-muted')
                         .addClass('text-success');
-                    // Show Wallet Check button
                     $('#checkWallet').removeClass('d-none');
-                    // Auto-fill fields
                     $('#firstName').val(response.firstName);
                     $('#lastName').val(response.lastName);
                     $('#email').val(response.email);
@@ -110,12 +100,9 @@ $(document).ready(function () {
                     $('#walletMemberName').text(response.firstName + ' ' + response.lastName);
                     $('#walletBalanceAmount').text(parseFloat(response.wallet).toFixed(2));
                     $('#sendCodeBtn').text('Verified').removeClass('btn-outline-danger').addClass('btn-danger').prop('disabled', true);
-
-                    // Disable editing (lock fields)
                     $('#firstName, #lastName, #email, #contactNum, #membershipId')
                         .attr('readonly', true);
 
-                    // 🌟 Hide the discount banner when membership is verified
                     const banner = $('#memberBanner');
                     if (banner.is(':visible')) {
                         banner.fadeOut(600, function () {
@@ -124,7 +111,6 @@ $(document).ready(function () {
                         });
                     }
 
-                    // Optional feedback (requires SweetAlert2)
                     Swal.fire({
                         icon: 'success',
                         title: 'Membership Verified!',
@@ -139,7 +125,7 @@ $(document).ready(function () {
                     $('#pinStatus').text('Incorrect PIN ❌')
                         .removeClass('text-success')
                         .addClass('text-danger');
-                    $('.pin-input').val(''); // clear inputs
+                    $('.pin-input').val('');
                     $('#pin1').focus();
                 }
             },
@@ -151,11 +137,8 @@ $(document).ready(function () {
         });
     }
 
-    // Set min date to today
     const today = new Date().toISOString().split("T")[0];
     $("#date").attr("min", today);
-
-    // Trigger when start or end time changes
     $('#startTime, #endTime').on('change', function () {
         const startTime = $('#startTime').val();
         const endTime = $('#endTime').val();
@@ -183,9 +166,8 @@ $(document).ready(function () {
                             didOpen: () => Swal.showLoading(),
                             allowOutsideClick: false,
                             showConfirmButton: false,
-                            timer: 1000, // 1 second delay
+                            timer: 1000,
                             willClose: () => {
-                                // Apply discount after "loading"
                                 if (isMember) {
                                     $('#subtotalSection').removeClass('d-none');
                                     $('#subtotalText').text(`₱${response.subtotal}`);
@@ -233,31 +215,23 @@ $(document).ready(function () {
         }
     });
 
-
-    // When a court is selected
     $('#court').on('change', function () {
         const courtType = $(this).val();
 
         if (courtType) {
-            // Show loading indicator (optional)
             $('#capacity, #amount').val('Loading...');
-
             $.ajax({
-                url: '/get-court-details', // 🔹 Your backend route
+                url: '/get-court-details',
                 method: 'POST',
                 data: { court_type: courtType },
                 dataType: 'json',
                 success: function (response) {
                     if (response.status === 'success') {
-                        // Fill input fields with data from backend
                         $('#capacity').val(response.data.capacity);
                         $('#amount').val(response.data.amount);
-
-                        // Disable editing (lock fields)
                         $('#capacity, #amount')
                             .attr('readonly', true).trigger('input');
                     } else {
-                        // Handle not found
                         $('#capacity, #amount').val('');
                         alert('Court details not found.');
                     }
@@ -268,16 +242,13 @@ $(document).ready(function () {
                 }
             });
         } else {
-            // Clear fields when no court selected
             $('#capacity, #amount').val('');
         }
     });
 
-    // Trigger check when court or date is changed
     $('#court, #date').on('change', function () {
         const court = $('#court').val();
         const date = $('#date').val();
-
 
         if (!court || !date) return;
 
@@ -287,20 +258,15 @@ $(document).ready(function () {
             dataType: 'json',
             data: { court, date },
             success: function (response) {
-                // Re-enable all options first
                 $('#startTime option, #endTime option').prop('disabled', false).removeClass('text-danger');
                 console.log(response.bookedSlots);
-
-                // --- FULLY BOOKED DETECTION ---
                 const allDayStart = "07:00";
                 const allDayEnd = "17:00";
 
-                // Convert to numbers -> "07:00" → 700, "17:00" → 1700 for easy compare
                 function timeNum(t) {
                     return parseInt(t.replace(":", ""), 10);
                 }
 
-                // Sort slots by start time
                 const slots = (response.bookedSlots ?? []).map(s => ({
                     start: timeNum(s.start_time),
                     end: timeNum(s.end_time)
@@ -311,14 +277,14 @@ $(document).ready(function () {
 
                 for (let i = 0; i < slots.length; i++) {
                     if (slots[i].start > currentStart) {
-                        fullyBooked = false; // gap found
+                        fullyBooked = false;
                         break;
                     }
                     if (slots[i].end > currentStart) {
-                        currentStart = slots[i].end; // extend covered time
+                        currentStart = slots[i].end;
                     }
                     if (currentStart >= timeNum(allDayEnd)) {
-                        fullyBooked = true; // reached 5pm
+                        fullyBooked = true;
                         break;
                     }
                 }
@@ -329,9 +295,7 @@ $(document).ready(function () {
                         text: 'All time slots for this date are fully booked. Please select another date.',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        // Clear and reset date input
                         $('#date').val('');
-                        // Also clear times just in case
                         $('#startTime').val('');
                         $('#endTime').val('');
                     });
@@ -341,7 +305,6 @@ $(document).ready(function () {
                             const start = slot.start_time;
                             const end = slot.end_time;
 
-                            // Disable start times that fall within booked ranges
                             $('#startTime option, #endTime option').each(function () {
                                 const val = $(this).val();
                                 if (val >= start && val < end) {
@@ -369,8 +332,6 @@ $(document).ready(function () {
                     timer: 1500,
                     showConfirmButton: false
                 });
-
-                // Disable start times that fall within booked ranges
                 $('#startTime option, #endTime option').each(function () {
                     $(this).prop('disabled', false).removeClass('text-danger');
                 });
@@ -378,7 +339,6 @@ $(document).ready(function () {
         });
     });
 
-    // Function to check if all required fields in Customer + Court sections are filled
     function checkRequiredFields() {
         const requiredFields = [
             '#firstName',
@@ -397,25 +357,19 @@ $(document).ready(function () {
             }
         });
 
-        // Enable or disable booking schedule fields
         $('#date, #startTime, #endTime, #total').prop('disabled', !allFilled);
     }
 
-    // Check fields on page load
     checkRequiredFields();
 
-    // Check again whenever an input changes
     $('#firstName, #lastName, #contactNum, #email, #court, #capacity, #amount').on('input change', function () {
         checkRequiredFields();
     });
-
 
     $('form[action="/booking"]').on('submit', function (e) {
         e.preventDefault();
 
         const contactNum = $('#contactNum').val().trim();
-
-        // Philippine number validation: 11 digits starting with 09 or +63
         const phPattern = /^(09\d{9}|\+639\d{9})$/;
 
         if (!phPattern.test(contactNum)) {
@@ -424,7 +378,7 @@ $(document).ready(function () {
                 title: 'Invalid Contact Number',
                 text: 'Please enter a valid Philippine number starting with 09 or +63 and exactly 11 digits.',
             });
-            return; // stop submission
+            return;
         }
 
         const formData = $(this).serialize();
@@ -474,56 +428,55 @@ $(document).ready(function () {
         });
     });
 
-     $('#useWallet').on('change', function() {
-            const isChecked = $(this).is(':checked');
+    $('#useWallet').on('change', function () {
+        const isChecked = $(this).is(':checked');
 
-            $.ajax({
-                url: '/calculateDeduction',
-                method: 'POST',
-                dataType: 'json',
-                data: {
-                    wallet: $('#walletBalance').val(),
-                    total: $('#subTotal').val()
-                },
-                success: function(response) {
-                    if (response.status === 'success') {
-                        if (isChecked) {
-                            Swal.fire({
-                                icon: response.icon,
-                                title: response.title,
-                                text: response.noBalanceMessage ? response.noBalanceMessage : 'Your wallet balance has been applied to the total amount.',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                            if (response.zero_balance) {
-                                $('#useWallet').prop('checked', false);
-                                return;
-                            }
-                            $('#total').val(response.deducted_amount);
-                            $('#walletText').val(parseFloat(response.new_wallet_balance).toFixed(2));
-                        } else if (!isChecked) {
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Wallet Deduction Removed',
-                                text: 'Your wallet balance deduction has been removed.',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                            // Unchecked → revert to original values
-                            $('#total').val(response.subtotal);
-                            $('#walletText').val(response.wallet_balance);
+        $.ajax({
+            url: '/calculateDeduction',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                wallet: $('#walletBalance').val(),
+                total: $('#subTotal').val()
+            },
+            success: function (response) {
+                if (response.status === 'success') {
+                    if (isChecked) {
+                        Swal.fire({
+                            icon: response.icon,
+                            title: response.title,
+                            text: response.noBalanceMessage ? response.noBalanceMessage : 'Your wallet balance has been applied to the total amount.',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        if (response.zero_balance) {
+                            $('#useWallet').prop('checked', false);
+                            return;
                         }
+                        $('#total').val(response.deducted_amount);
+                        $('#walletText').val(parseFloat(response.new_wallet_balance).toFixed(2));
+                    } else if (!isChecked) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Wallet Deduction Removed',
+                            text: 'Your wallet balance deduction has been removed.',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        $('#total').val(response.subtotal);
+                        $('#walletText').val(response.wallet_balance);
                     }
-                },
-                error: function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'An error occurred while calculating the deduction. Please try again.',
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
                 }
-            });
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while calculating the deduction. Please try again.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
         });
+    });
 });
