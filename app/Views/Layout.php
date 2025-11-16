@@ -1,5 +1,3 @@
-<?php $flashMessages = getFlashMessages(); ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
