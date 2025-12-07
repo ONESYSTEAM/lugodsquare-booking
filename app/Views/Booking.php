@@ -91,7 +91,7 @@ $this->insert('Errors/Toasts');
                         <a href="/membership-registration" class="text-success text-decoration-underline">Join now</a>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="margin-top: -8px;"></button>
                     </div>
-                    <form action="/booking" method="POST">
+                    <form action="/booking" method="POST" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-lg-6 mb-3">
                                 <div class="row g-3">
@@ -147,21 +147,21 @@ $this->insert('Errors/Toasts');
                                         <button class="btn btn-sm btn-outline-danger" type="button" id="sendCodeBtn">Send Code</button>
                                     </div>
                                     <div id="codeSection" class="text-center d-none ">
-                                        <label class="fw-bold mb-2">Enter 6-Digit Code</label>
+                                        <label class="fw-bold mb-2 text-light">Enter 6-Digit Code</label>
                                         <div class="row justify-content-center">
                                             <div class=" col-md-6 d-flex justify-content-center gap-2 mb-3 px-3 px-md-0">
-                                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-code">
-                                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-code">
-                                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-code">
-                                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-code">
-                                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-code">
-                                                <input type="password" maxlength="1" class="form-control pin-input text-center pin-code">
+                                                <input type="text" maxlength="1" class="form-control pin-input text-center pin-code">
+                                                <input type="text" maxlength="1" class="form-control pin-input text-center pin-code">
+                                                <input type="text" maxlength="1" class="form-control pin-input text-center pin-code">
+                                                <input type="text" maxlength="1" class="form-control pin-input text-center pin-code">
+                                                <input type="text" maxlength="1" class="form-control pin-input text-center pin-code">
+                                                <input type="text" maxlength="1" class="form-control pin-input text-center pin-code">
                                             </div>
                                         </div>
                                         <input type="hidden" id="code" placeholder="Enter verification code">
                                     </div>
 
-                                    <h6 class="text-light text-center">Court Details</h6>
+                                    <h6 class="text-light text-center">Court Booking Details</h6>
                                     <div class="col-md-12">
                                         <div class="form-floating">
                                             <select class="form-select" id="court" name="courtType" required="">
@@ -185,13 +185,6 @@ $this->insert('Errors/Toasts');
                                             <label for="amount">Amount</label>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6">
-                                <div class="row g-3">
-
-                                    <h6 class="text-light text-center">Booking Schedule</h6>
                                     <div class="col-12">
                                         <div class="form-floating">
                                             <input type="date" class="form-control" id="date" name="date" required="">
@@ -235,6 +228,18 @@ $this->insert('Errors/Toasts');
                                             <label for="endTime">End Time</label>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="row g-3">
+                                    <h6 class="text-light text-center">Partial Payment Detials</h6>
+                                    <div class="col-12">
+                                        <div class="alert alert-warning mb-0" role="alert">
+                                            <strong>Important:</strong> A 50% partial payment is required to confirm your booking. Use the gcash number provided below to make the payment and upload the receipt for verification.
+
+                                        </div>
+                                    </div>
                                     <div id="subtotalSection" class="d-none mt-2 text-light">
                                         <div>Subtotal: <span id="subtotalText">₱0.00</span></div>
                                         <div>Membership Discount: <span id="discountText">₱0.00</span></div>
@@ -258,6 +263,20 @@ $this->insert('Errors/Toasts');
                                         <div class="form-floating">
                                             <input type="text" class="form-control" id="total" name="total" required="">
                                             <label for="total">Total Amount</label>
+                                        </div>
+                                        <div class="mt-2 text-light d-none" id="partialPaymentSection">Required Partial Payment: <span id="partial-payment">₱0.00</span></div>
+                                    </div>
+                                    <div class="col-12 gcash mt-0">
+                                        <hr class="text-light">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="gcash-num" disabled value="09123456789">
+                                            <label for="gcash-num">Gcash Number</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 gcash">
+                                        <div class="form-floating">
+                                            <input type="file" class="form-control" id="gcash-receipt" name="gcash-receipt" required="">
+                                            <label for="gcash-receipt">Gcash Receipt</label>
                                         </div>
                                     </div>
                                     <div class="col-12">

@@ -98,7 +98,7 @@ $(document).ready(function () {
                     $('#walletText').val(response.wallet).attr('readonly', true);
                     $('#walletBalance').val(response.wallet);
                     $('#walletMemberName').text(response.firstName + ' ' + response.lastName);
-                    $('#walletBalanceAmount').text(parseFloat(response.wallet).toFixed(2));
+                    $('#walletBalanceAmount').text(response.wallet);
                     $('#sendCodeBtn').text('Verified').removeClass('btn-outline-danger').addClass('btn-danger').prop('disabled', true);
                     $('#firstName, #lastName, #email, #contactNum, #membershipId')
                         .attr('readonly', true);
@@ -159,6 +159,8 @@ $(document).ready(function () {
                 success: function (response) {
                     if (response.status === 'success') {
                         $('#total').val(parseFloat(response.total).toFixed(2)).attr('readonly', true);
+                        $('#partial-payment').text(`₱${parseFloat(response.total / 2).toFixed(2)}`);
+                        $('#partialPaymentSection').removeClass('d-none');
 
                         let loadingMsg = isMember ? "Applying membership discount..." : "Calculating total...";
                         Swal.fire({
@@ -357,7 +359,7 @@ $(document).ready(function () {
             }
         });
 
-        $('#date, #startTime, #endTime, #total').prop('disabled', !allFilled);
+        $('#date, #startTime, #endTime, #total, #gcash-receipt').prop('disabled', !allFilled);
     }
 
     checkRequiredFields();
@@ -381,7 +383,7 @@ $(document).ready(function () {
             return;
         }
 
-        const formData = $(this).serialize();
+        const formData = new FormData(this); // Use FormData to include files
 
         Swal.fire({
             title: 'Processing your booking...',
@@ -394,6 +396,8 @@ $(document).ready(function () {
             url: '/booking',
             method: 'POST',
             data: formData,
+            processData: false, // Important for FormData
+            contentType: false, // Important for FormData
             dataType: 'json',
             success: function (response) {
                 Swal.close();
@@ -401,10 +405,9 @@ $(document).ready(function () {
                 if (response.status === 'success') {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Booking Confirmed!',
-                        text: 'Your court has been successfully booked. Please check your email for confirmation details.',
-                        showConfirmButton: false,
-                        timer: 2000
+                        title: 'Booking Request Submitted!',
+                        text: 'Your court booking request has been successfully sent and is pending admin confirmation. Please check your email for updates.',
+                        showConfirmButton: true
                     }).then(() => {
                         window.location.href = '/';
                     });
@@ -455,6 +458,8 @@ $(document).ready(function () {
                         }
                         $('#total').val(response.deducted_amount);
                         $('#walletText').val(parseFloat(response.new_wallet_balance).toFixed(2));
+                        $('.gcash').addClass('d-none').prop('disabled', true);
+                        $('#partialPaymentSection').addClass('d-none');
                     } else if (!isChecked) {
                         Swal.fire({
                             icon: 'info',
@@ -465,6 +470,8 @@ $(document).ready(function () {
                         });
                         $('#total').val(response.subtotal);
                         $('#walletText').val(response.wallet_balance);
+                        $('.gcash').removeClass('d-none').prop('enabled', true);
+                        $('#partialPaymentSection').removeClass('d-none');
                     }
                 }
             },

@@ -98,6 +98,27 @@ class BookingController
             $endTime = $_POST['endTime'];
             $totalAmount = $_POST['total'];
             $walletBalance = $_POST['walletBalance'];
+            $gcashReceipt = $_FILES['gcash-receipt'];
+
+            $gcashFileName = '';
+            if ($gcashReceipt && $gcashReceipt['error'] === UPLOAD_ERR_OK) {
+                // Booking public uploads folder
+                $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/gcash/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+                $fileExtension = pathinfo($gcashReceipt['name'], PATHINFO_EXTENSION);
+                $gcashFileName = uniqid('gcash_') . '.' . $fileExtension;
+
+                $bookingFilePath = $uploadDir . $gcashFileName;
+                move_uploaded_file($gcashReceipt['tmp_name'], $bookingFilePath);
+
+                // Admin public uploads folder
+                $adminUploadDir = 'C:/xampp/htdocs/lugodsquare-admin/public/uploads/gcash/';
+                if (!is_dir($adminUploadDir)) mkdir($adminUploadDir, 0777, true);
+
+                $adminFilePath = $adminUploadDir . $gcashFileName;
+                copy($bookingFilePath, $adminFilePath); // ✅ use full source path
+            }
 
             $result = $this->BookingModel->insertBooking(
                 $membershipId,
@@ -109,7 +130,8 @@ class BookingController
                 $date,
                 $startTime,
                 $endTime,
-                $totalAmount
+                $totalAmount,
+                $gcashFileName
             );
 
             $this->BookingModel->updateWalletBalance($membershipId, $walletBalance);
@@ -174,28 +196,28 @@ class BookingController
         $body = "
         <div style='font-family: Arial, sans-serif; background-color: #f6f8fa; padding: 20px;'>
             <div style='max-width:600px;margin:auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
-                <div style='background-color: #dc3545;color:white;text-align:center;padding:20px;'>
-                    <h2 style='margin:0;'>Court Booking Confirmation</h2>
+            <div style='background-color: #ffc107;color:white;text-align:center;padding:20px;'>
+                <h2 style='margin:0;'>Court Booking Request Received</h2>
+            </div>
+            <div style='padding:25px;'>
+                <p>Hi <strong>$name</strong>,</p>
+                <p>Thank you for submitting your court booking request. We have received your booking and it is currently <strong>pending admin confirmation</strong>.</p>
+
+                <div style='background-color:#f9fafc;padding:15px;border-radius:6px;margin:15px 0;'>
+                <p><strong>Court Type:</strong> $courtType </p>
+                <p><strong>Date:</strong> $formattedDate </p> 
+                <p><strong>Time:</strong> $formattedStart - $formattedEnd</p>
+                <p><strong>Total Amount:</strong> $formattedAmount</p>
                 </div>
-                <div style='padding:25px;'>
-                    <p>Hi <strong>$name</strong>,</p>
-                    <p>We're happy to inform you that your court booking has been successfully confirmed.</p>
 
-                    <div style='background-color:#f9fafc;padding:15px;border-radius:6px;margin:15px 0;'>
-                        <p><strong>Court Type:</strong> $courtType </p>
-                        <p><strong>Date:</strong> $formattedDate </p> 
-                        <p><strong>Time:</strong> $formattedStart - $formattedEnd</p>
-                        <p><strong>Total Amount:</strong> $formattedAmount</p>
-                    </div>
+                <p>Our admin team will review your request and send you a confirmation email once your booking has been approved.</p>
+                <p>Thank you for choosing <strong>$appName</strong>!</p>
 
-                    <p>Please arrive at least <strong>10 minutes before</strong> your scheduled time.</p>
-                    <p>Thank you for choosing <strong>$appName</strong> — we look forward to seeing you!</p>
+                <hr style='border:none;border-top:1px solid #ddd;margin:20px 0;'>
 
-                    <hr style='border:none;border-top:1px solid #ddd;margin:20px 0;'>
-
-                    <p style='font-size:13px;color:#777;text-align:center;'>This is an automated message, please do not reply.<br>
-                    &copy; " . date('Y') . " Lugod Square. All rights reserved.</p>
-                </div>
+                <p style='font-size:13px;color:#777;text-align:center;'>This is an automated message, please do not reply.<br>
+                &copy; " . date('Y') . " Lugod Square. All rights reserved.</p>
+            </div>
             </div>
         </div>
         ";
