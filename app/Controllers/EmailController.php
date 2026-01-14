@@ -17,7 +17,7 @@ class EmailController
         $db = new DBConnection();
         $this->EmailModel = new EmailModel($db);
     }
-    
+
     public function verifyEmail()
     {
         header('Content-Type: application/json');
@@ -66,20 +66,12 @@ class EmailController
             $email = trim($_POST['email']);
             $code = trim($_POST['code']);
 
-            $verification = $this->EmailModel->findByEmail($email);
+            $verification = $this->EmailModel->findValidByEmail($email);
 
             if (!$verification) {
                 echo json_encode(['success' => false, 'message' => 'No verification record found.']);
                 return;
             }
-            // Expired (older than 10 minutes)
-            $createdAt = strtotime($verification['created_at']);
-            if (time() - $createdAt > 600) {
-                $this->EmailModel->delete($email);
-                echo json_encode(['success' => false, 'message' => 'Code expired. Please request a new one.']);
-                return;
-            }
-
             // Invalid code
             if ($verification['code'] !== $code) {
                 echo json_encode(['success' => false, 'message' => 'Invalid code.']);

@@ -111,13 +111,6 @@ class BookingController
 
                 $bookingFilePath = $uploadDir . $gcashFileName;
                 move_uploaded_file($gcashReceipt['tmp_name'], $bookingFilePath);
-
-                // Admin public uploads folder
-                $adminUploadDir = 'C:/xampp/htdocs/lugodsquare-admin/public/uploads/gcash/';
-                if (!is_dir($adminUploadDir)) mkdir($adminUploadDir, 0777, true);
-
-                $adminFilePath = $adminUploadDir . $gcashFileName;
-                copy($bookingFilePath, $adminFilePath); // ✅ use full source path
             }
 
             $result = $this->BookingModel->insertBooking(

@@ -23,13 +23,19 @@ class EmailModel
         $stmt->execute();
     }
 
-    public function findByEmail($email)
+    public function findValidByEmail($email)
     {
-        $stmt = $this->db->prepare("SELECT * FROM email_verifications WHERE email = :email");
+        $stmt = $this->db->prepare("
+        SELECT * FROM email_verifications 
+        WHERE email = :email 
+          AND created_at >= (NOW() - INTERVAL 10 MINUTE)
+        LIMIT 1
+    ");
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
 
     public function checkEmailExists($email)
     {
