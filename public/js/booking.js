@@ -572,6 +572,7 @@ $(document).ready(function () {
           $("#lookupErrorMessage")
             .removeClass("d-none")
             .text("Invalid Card Number.");
+          $btn.prop("disabled", false).text("Confirm");
         }
       },
     });
