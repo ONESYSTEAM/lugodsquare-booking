@@ -37,6 +37,9 @@ class Router
 
         Router::add('/calculateDeduction', fn() => (new BookingController())->calculateDeduction(), 'POST');
 
+        //account details
+        Router::add('/member-lookup', fn() => (new MembershipController())->lookupMemberAccount(), 'POST');
+
         // Run the router
         Router::run();
     }

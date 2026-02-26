@@ -169,4 +169,44 @@ class MembershipController
         header("Location:/");
         exit;
     }
+
+    public function lookupMemberAccount()
+    {
+        // 1. Get the card number from the AJAX GET request
+        $cardNumber = $_GET['card'] ?? '';
+
+        // 2. Validate input
+        if (empty($cardNumber)) {
+            echo json_encode(['success' => false, 'message' => 'Card number is required.']);
+            return;
+        }
+
+        try {
+            // 3. Call the model function we created earlier
+            $data = $this->MembershipModel->getMemberAccountDetails($cardNumber);
+
+            header('Content-Type: application/json');
+
+            if ($data) {
+                // Success: Member found, return the profile and the transaction array
+                echo json_encode([
+                    'success' => true,
+                    'member' => $data
+                ]);
+            } else {
+                // Failure: Member not found
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'No member found with that card number.'
+                ]);
+            }
+        } catch (Exception $e) {
+            // Error: Handle database or system errors gracefully
+            echo json_encode([
+                'success' => false,
+                'message' => 'An error occurred while retrieving data.'
+            ]);
+        }
+        exit; // Ensure no other HTML is rendered
+    }
 }

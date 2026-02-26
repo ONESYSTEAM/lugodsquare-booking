@@ -58,4 +58,38 @@ class MembershipModel
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function getMemberAccountDetails($cardNumber)
+    {
+        // 1. Get Basic Member Profile
+        $stmt = $this->db->prepare("SELECT id, first_name, last_name, email, contact_number, wallet 
+                                FROM members 
+                                WHERE card_number = :card_number LIMIT 1");
+        $stmt->bindParam(':card_number', $cardNumber, PDO::PARAM_STR);
+        $stmt->execute();
+        $member = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$member) return null;
+
+        // 2. Get Transaction History with Item Summary (Handles multiple items per sale)
+        $stmt = $this->db->prepare("
+        SELECT 
+            s.id AS sale_id, 
+            s.created_at, 
+            s.final_total, 
+            s.payment_method,
+            GROUP_CONCAT(CONCAT(si.qty, 'x ', si.item_name) SEPARATOR ', ') AS item_summary
+        FROM sales s
+        LEFT JOIN sales_items si ON s.id = si.sale_id
+        WHERE s.membership_card = :card_number
+        GROUP BY s.id
+        ORDER BY s.created_at DESC
+    ");
+        $stmt->bindParam(':card_number', $cardNumber, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $member['transactions'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $member;
+    }
 }

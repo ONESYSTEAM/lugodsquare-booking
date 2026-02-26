@@ -32,6 +32,7 @@ $this->insert('Errors/Toasts');
                     <li><a href="#">About</a></li>
                     <li><a href="#">Merchandise</a></li>
                     <li><a href="#">Contact</a></li>
+                    <li><a href="" id="checkWallet" data-bs-toggle="modal" data-bs-target="#accountDetails">Account</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
@@ -334,6 +335,57 @@ $this->insert('Errors/Toasts');
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="accountDetails" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Member Account Access</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div id="memberSearchSection">
+                    <p class="text-muted">Enter your Membership Card Number to view your balance and details.</p>
+                    <div class="input-group mb-3">
+                        <input type="text" id="lookupCardNumber" class="form-control" placeholder="Scan or Enter Card ID..." autofocus>
+                        <button class="btn btn-primary" type="button" id="btnLookupMember">Confirm</button>
+                    </div>
+                    <div id="lookupErrorMessage" class="text-danger small d-none">Invalid card number. Please try again.</div>
+                </div>
+
+                <div id="memberDetailsSection" class="d-none">
+                    <div id="profileHeaderInjection"></div>
+
+                    <h6><i class="mdi mdi-history"></i> Recent Transactions</h6>
+                    <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                        <table class="table table-sm table-hover border">
+                            <thead class="bg-white sticky-top">
+                                <tr class="small">
+                                    <th>Date</th>
+                                    <th>Items</th>
+                                    <th class="text-end">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionHistoryBody" class="small">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-3 text-center">
+                        <button type="button" class="btn btn-sm btn-link text-decoration-none" id="btnResetLookup">
+                            <i class="mdi mdi-refresh"></i> Check Another Card
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
