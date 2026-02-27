@@ -143,6 +143,7 @@ $this->insert('Errors/Toasts');
                                             <input type="email" class="form-control" id="email" name="email" required="">
                                             <label for="email">Email</label>
                                         </div>
+                                        <small class="text-warning" id="emailNote">Note: To proceed to booking, verify your email first.</small>
                                     </div>
                                     <div class="col-4 col-md-2 d-flex justify-content-center align-items-center" id="sendCodeSection">
                                         <button class="btn btn-sm btn-outline-danger" type="button" id="sendCodeBtn">Send Code</button>
@@ -281,7 +282,7 @@ $this->insert('Errors/Toasts');
                                         </div>
                                     </div>
                                     <div class="col-12">
-                                        <button type="submit" class="btn btn-danger w-100">
+                                        <button type="submit" class="btn btn-danger w-100 py-3">
                                             Book Court
                                         </button>
                                     </div>

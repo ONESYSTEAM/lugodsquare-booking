@@ -330,7 +330,7 @@ $(document).ready(function () {
               $("#startTime option, #endTime option").each(function () {
                 const val = $(this).val();
                 if (val >= start && val < end) {
-                  $(this).prop("disabled", true).addClass("text-danger");
+                  $(this).prop("disabled", true).addClass("d-none");
                 }
               });
             });
@@ -360,31 +360,31 @@ $(document).ready(function () {
     });
   });
 
-  function checkRequiredFields() {
-    const requiredFields = [
-      "#firstName",
-      "#lastName",
-      "#contactNum",
-      "#email",
-      "#court",
-      "#capacity",
-      "#amount",
-    ];
+  // function checkRequiredFields() {
+  //   const requiredFields = [
+  //     "#firstName",
+  //     "#lastName",
+  //     "#contactNum",
+  //     "#email",
+  //     "#court",
+  //     "#capacity",
+  //     "#amount",
+  //   ];
 
-    let allFilled = true;
-    requiredFields.forEach(function (selector) {
-      if ($(selector).val().trim() === "") {
-        allFilled = false;
-      }
-    });
+  //   let allFilled = true;
+  //   requiredFields.forEach(function (selector) {
+  //     if ($(selector).val().trim() === "") {
+  //       allFilled = false;
+  //     }
+  //   });
 
-    $("#date, #startTime, #endTime, #total, #gcash-receipt").prop(
-      "disabled",
-      !allFilled,
-    );
-  }
+  //   $("#date, #startTime, #endTime, #total, #gcash-receipt").prop(
+  //     "disabled",
+  //     !allFilled,
+  //   );
+  // }
 
-  checkRequiredFields();
+  // checkRequiredFields();
 
   $(
     "#firstName, #lastName, #contactNum, #email, #court, #capacity, #amount",
